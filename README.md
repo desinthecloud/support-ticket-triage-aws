@@ -204,5 +204,6 @@ The SageMaker endpoint is the only significant cost driver. Delete it between se
 
 ## Related
 
-- Medium article: [Why I Used scikit-learn Instead of a Language Model to Build a Support Ticket Classifier on AWS](#)
+- Medium article: [Why I Used scikit-learn Instead of a Language Model to Build a Support Ticket Classifier on AWS](https://medium.com/@djweston38/why-i-used-scikit-learn-instead-of-a-language-model-to-build-a-support-ticket-classifier-on-aws-af28f4d23e73)
 - Author: [Des in the Cloud](https://github.com/desinthecloud)
+
