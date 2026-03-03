@@ -47,6 +47,11 @@ print('Save this endpoint name. You will use it in Lambda.')
 
 
 # Test the endpoint directly
-result = predictor.predict(['I was charged twice for my subscription'])
-print(result)  # Should return ['billing']
+from sagemaker.serializers import JSONSerializer
+from sagemaker.deserializers import JSONDeserializer
 
+predictor.serializer = JSONSerializer()
+predictor.deserializer = JSONDeserializer()
+
+result = predictor.predict(['I was charged twice for my subscription'])
+print(result)
