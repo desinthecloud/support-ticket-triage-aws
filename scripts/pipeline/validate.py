@@ -11,8 +11,8 @@ s3 = boto3.client('s3', region_name=os.environ['AWS_REGION'])
 sns = boto3.client('sns', region_name=os.environ['AWS_REGION'])
 
 SNS_TOPIC_ARN = os.environ['SNS_TOPIC_ARN']
-TRAINING_BUCKET = os.environ.get('TRAINING_BUCKET', 'support-ticket-training-data')
-MODEL_BUCKET = os.environ.get('MODEL_BUCKET', 'support-ticket-models')
+TRAINING_BUCKET = os.environ.get('TRAINING_BUCKET', 'support-ticket-ml-supporttickets0302')
+MODEL_BUCKET = os.environ.get('MODEL_BUCKET', 'support-ticket-ml-supporttickets0302')
 
 ACCURACY_THRESHOLD = 0.80   # New model must hit at least 80% accuracy
 F1_THRESHOLD = 0.78         # New model must hit at least 0.78 weighted F1
@@ -35,16 +35,15 @@ def download_model(artifact_uri):
         with tarfile.open(local_path, 'r:gz') as tar:
             tar.extractall(tmpdir)
 
-        model_path = f'{tmpdir}/model.pkl'
-        with open(model_path, 'rb') as f:
-            return pickle.load(f)
-
+    model_path = f'{tmpdir}/model.joblib'
+        import joblib
+        return joblib.load(model_path)
 
 def load_test_data():
     """Load held-out test set from S3."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        local_path = f'{tmpdir}/test.csv'
-        s3.download_file(TRAINING_BUCKET, 'data/test.csv', local_path)
+        local_path = '/tmp/tickets.csv'
+        s3.download_file(TRAINING_BUCKET, 'data/tickets.csv', local_path)
         df = pd.read_csv(local_path)
         return df['text'].tolist(), df['category'].tolist()
 
