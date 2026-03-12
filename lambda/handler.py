@@ -4,7 +4,7 @@ import os
 from reply_templates import get_reply
 
 
-ENDPOINT_NAME = os.environ.get('SAGEMAKER_ENDPOINT_NAME', 'your-endpoint-name')
+ENDPOINT_NAME = os.environ.get('SAGEMAKER_ENDPOINT_NAME', 'support-ticket-triage-2026-03-12-19-09-57-828')
 
 
 sagemaker_runtime = boto3.client('runtime.sagemaker')
