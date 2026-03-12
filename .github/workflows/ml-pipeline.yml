@@ -1,0 +1,145 @@
+name: ML Pipeline
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'train.py'
+      - 'scripts/pipeline/**'
+  schedule:
+    - cron: '0 6 * * 1'  # Every Monday at 6am UTC
+  workflow_dispatch:     # Manual trigger and EventBridge webhook
+    inputs:
+      trigger_source:
+        description: 'What triggered this run'
+        required: false
+        default: 'manual'
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  SAGEMAKER_ROLE_ARN: ${{ secrets.SAGEMAKER_ROLE_ARN }}
+  SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
+  TRAINING_BUCKET: support-ticket-training-data
+  MODEL_BUCKET: support-ticket-models
+
+jobs:
+  test:
+    name: Run Validation Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: pytest tests/ -v
+
+  retrain:
+    name: Retrain Model
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Package and upload training source
+        run: |
+          tar -czf sourcedir.tar.gz train.py requirements.txt
+          aws s3 cp sourcedir.tar.gz \
+            s3://$TRAINING_BUCKET/source/sourcedir.tar.gz
+
+      - name: Run retraining job
+        run: python scripts/pipeline/retrain.py
+
+      - name: Upload model artifact URI
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-artifact-uri
+          path: model_artifact_uri.txt
+
+  validate:
+    name: Validate New Model
+    needs: retrain
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Download model artifact URI
+        uses: actions/download-artifact@v4
+        with:
+          name: model-artifact-uri
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run validation
+        run: python scripts/pipeline/validate.py
+
+      - name: Upload validated artifact URI
+        uses: actions/upload-artifact@v4
+        with:
+          name: validated-artifact-uri
+          path: validated_artifact_uri.txt
+
+  deploy:
+    name: Deploy Model
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Download validated artifact URI
+        uses: actions/download-artifact@v4
+        with:
+          name: validated-artifact-uri
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Deploy to endpoint
+        run: python scripts/pipeline/deploy.py
+
