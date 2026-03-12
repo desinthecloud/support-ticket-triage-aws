@@ -64,7 +64,7 @@ jobs:
 
       - name: Package and upload training source
         run: |
-          tar -czf sourcedir.tar.gz train.py requirements.txt
+          tar -czf sourcedir.tar.gz training/train.py requirements.txt
           aws s3 cp sourcedir.tar.gz \
             s3://$TRAINING_BUCKET/source/sourcedir.tar.gz
 
