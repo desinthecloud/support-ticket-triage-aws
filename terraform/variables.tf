@@ -15,3 +15,9 @@ variable "bucket_suffix" {
   type        = string
 }
 
+variable "training_bucket_name" {
+  description = "Name of the S3 bucket holding training data"
+  type        = string
+  default     = "support-ticket-ml-supporttickets0302"
+}
+
