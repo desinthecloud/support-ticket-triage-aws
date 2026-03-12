@@ -11,12 +11,13 @@ from sklearn.metrics import classification_report
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model-dir', type=str, default=os.environ.get('SM_MODEL_DIR', '.'))
-    parser.add_argument('--train', type=str, default=os.environ.get('SM_CHANNEL_TRAIN', 'data'))
     args = parser.parse_args()
 
-    data_path = os.path.join(args.train, 'tickets.csv')
+    data_dir = os.environ.get('SM_CHANNEL_TRAINING', 'data')
+    data_path = os.path.join(data_dir, 'tickets.csv')
     df = pd.read_csv(data_path)
 
+	
     print(f'Loaded {len(df)} records')
     print(df['category'].value_counts())
 

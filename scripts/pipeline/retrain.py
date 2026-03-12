@@ -8,8 +8,8 @@ sagemaker = boto3.client('sagemaker', region_name=os.environ['AWS_REGION'])
 sns = boto3.client('sns', region_name=os.environ['AWS_REGION'])
 
 ROLE_ARN = os.environ['SAGEMAKER_ROLE_ARN']
-TRAINING_BUCKET = os.environ.get('TRAINING_BUCKET', 'support-ticket-training-data')
-MODEL_BUCKET = os.environ.get('MODEL_BUCKET', 'support-ticket-models')
+TRAINING_BUCKET = os.environ.get('TRAINING_BUCKET', 'support-ticket-ml-supporttickets0302')
+MODEL_BUCKET = os.environ.get('MODEL_BUCKET', 'support-ticket-ml-supporttickets0302')
 SNS_TOPIC_ARN = os.environ['SNS_TOPIC_ARN']
 IMAGE_URI = '683313688378.dkr.ecr.us-east-1.amazonaws.com/sagemaker-scikit-learn:1.2-1-cpu-py3'
 
