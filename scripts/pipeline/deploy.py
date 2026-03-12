@@ -47,21 +47,22 @@ def deploy():
             'InstanceType': 'ml.t2.medium',
             'InitialVariantWeight': 1
         }]
-try:
-    sagemaker.describe_endpoint(EndpointName=ENDPOINT_NAME)
-    print(f'Updating endpoint: {ENDPOINT_NAME}')
-    sagemaker.update_endpoint(
-        EndpointName=ENDPOINT_NAME,
-        EndpointConfigName=config_name
     )
-except Exception:
-    print(f'Creating endpoint: {ENDPOINT_NAME}')
-    sagemaker.create_endpoint(
-        EndpointName=ENDPOINT_NAME,
-        EndpointConfigName=config_name
-    ) 
 
-    # Wait for endpoint update to complete
+    try:
+        sagemaker.describe_endpoint(EndpointName=ENDPOINT_NAME)
+        print(f'Updating endpoint: {ENDPOINT_NAME}')
+        sagemaker.update_endpoint(
+            EndpointName=ENDPOINT_NAME,
+            EndpointConfigName=config_name
+        )
+    except Exception:
+        print(f'Creating endpoint: {ENDPOINT_NAME}')
+        sagemaker.create_endpoint(
+            EndpointName=ENDPOINT_NAME,
+            EndpointConfigName=config_name
+        )
+
     while True:
         response = sagemaker.describe_endpoint(EndpointName=ENDPOINT_NAME)
         status = response['EndpointStatus']
@@ -77,7 +78,6 @@ except Exception:
             raise Exception(f'Endpoint update failed: {status}')
         time.sleep(30)
 
-    # Save new artifact as baseline for next validation run
     with tempfile.TemporaryDirectory() as tmpdir:
         local = f'{tmpdir}/baseline.txt'
         with open(local, 'w') as f:
@@ -93,4 +93,3 @@ except Exception:
 
 if __name__ == '__main__':
     deploy()
-
