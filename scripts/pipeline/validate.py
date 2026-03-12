@@ -1,7 +1,7 @@
 import boto3
+import joblib
 import json
 import os
-import pickle
 import tarfile
 import tempfile
 import pandas as pd
@@ -22,9 +22,7 @@ IMPROVEMENT_MARGIN = 0.01   # New model must beat baseline by at least 1%
 def send_alert(subject, message):
     sns.publish(TopicArn=SNS_TOPIC_ARN, Subject=subject, Message=message)
 
-
 def download_model(artifact_uri):
-    """Download model.tar.gz from S3 and extract the model file."""
     bucket = artifact_uri.split('/')[2]
     key = '/'.join(artifact_uri.split('/')[3:])
 
@@ -35,8 +33,7 @@ def download_model(artifact_uri):
         with tarfile.open(local_path, 'r:gz') as tar:
             tar.extractall(tmpdir)
 
-    model_path = f'{tmpdir}/model.joblib'
-        import joblib
+        model_path = f'{tmpdir}/model.joblib'
         return joblib.load(model_path)
 
 def load_test_data():
