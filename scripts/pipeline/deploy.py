@@ -1,5 +1,5 @@
 import boto3
-import json
+import time
 import os
 import tempfile
 from datetime import datetime
@@ -9,8 +9,8 @@ s3 = boto3.client('s3', region_name=os.environ['AWS_REGION'])
 sns = boto3.client('sns', region_name=os.environ['AWS_REGION'])
 
 ROLE_ARN = os.environ['SAGEMAKER_ROLE_ARN']
-MODEL_BUCKET = os.environ.get('MODEL_BUCKET', 'support-ticket-models')
-ENDPOINT_NAME = 'support-ticket-endpoint'
+MODEL_BUCKET = os.environ.get('MODEL_BUCKET', 'support-ticket-ml-supporttickets0302')
+ENDPOINT_NAME = 'support-ticket-triage-2026-03-12-19-09-57-828'
 SNS_TOPIC_ARN = os.environ['SNS_TOPIC_ARN']
 IMAGE_URI = '683313688378.dkr.ecr.us-east-1.amazonaws.com/sagemaker-scikit-learn:1.2-1-cpu-py3'
 
@@ -47,16 +47,21 @@ def deploy():
             'InstanceType': 'ml.t2.medium',
             'InitialVariantWeight': 1
         }]
-    )
-
+try:
+    sagemaker.describe_endpoint(EndpointName=ENDPOINT_NAME)
     print(f'Updating endpoint: {ENDPOINT_NAME}')
     sagemaker.update_endpoint(
         EndpointName=ENDPOINT_NAME,
         EndpointConfigName=config_name
     )
+except Exception:
+    print(f'Creating endpoint: {ENDPOINT_NAME}')
+    sagemaker.create_endpoint(
+        EndpointName=ENDPOINT_NAME,
+        EndpointConfigName=config_name
+    ) 
 
     # Wait for endpoint update to complete
-    import time
     while True:
         response = sagemaker.describe_endpoint(EndpointName=ENDPOINT_NAME)
         status = response['EndpointStatus']
