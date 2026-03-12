@@ -77,7 +77,13 @@ resource "aws_iam_role_policy" "sagemaker_s3" {
         aws_s3_bucket.ml_bucket.arn,
         "${aws_s3_bucket.ml_bucket.arn}/*"
       ]
-    }]
-  })
+    },
+    {
+        Effect   = "Allow"
+        Action   = ["sns:Publish"]
+        Resource = "*"
+    }
+   ]
+ })
 }
 
