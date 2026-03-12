@@ -20,7 +20,7 @@ env:
   SAGEMAKER_ROLE_ARN: ${{ secrets.SAGEMAKER_ROLE_ARN }}
   SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
   TRAINING_BUCKET: support-ticket-ml-supporttickets0302
-  MODEL_BUCKET: support-ticket-models
+  MODEL_BUCKET: support-ticket-ml-supporttickets0302
 
 jobs:
   test:
