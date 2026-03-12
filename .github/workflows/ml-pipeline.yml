@@ -19,7 +19,7 @@ env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
   SAGEMAKER_ROLE_ARN: ${{ secrets.SAGEMAKER_ROLE_ARN }}
   SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
-  TRAINING_BUCKET: support-ticket-training-data
+  TRAINING_BUCKET: support-ticket-ml-supporttickets0302
   MODEL_BUCKET: support-ticket-models
 
 jobs:
