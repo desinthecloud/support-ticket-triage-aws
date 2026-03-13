@@ -283,5 +283,5 @@ Delete the endpoint between sessions to avoid ongoing charges.
 ## Related
 
 - **Project 1 article:** [Why I Used scikit-learn Instead of a Language Model to Build a Support Ticket Classifier on AWS](https://medium.com/@djweston38/why-i-used-scikit-learn-instead-of-a-language-model-to-build-a-support-ticket-classifier-on-aws-af28f4d23e73)
-- **Project 2 article:** https://medium.com/@djweston38/c4316b4e36f8
+- **Project 2 article:** [My Support Ticket Classifier Was Already Stale the Day I Deployed It](https://medium.com/@djweston38/c4316b4e36f8)
 - **Author:** [Des in the Cloud](https://github.com/desinthecloud)
