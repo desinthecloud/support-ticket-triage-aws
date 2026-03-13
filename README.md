@@ -24,7 +24,7 @@ Automated retraining pipeline built on top of Project 1. Upload new ticket data 
 
 **Stack:** GitHub Actions, SageMaker, EventBridge, Lambda, SNS, Secrets Manager, Terraform
 
-**Article:** [My Support Ticket Classifier Was Already Stale the Day I Deployed It](#) *(coming soon)*
+**Article:** [My Support Ticket Classifier Was Already Stale the Day I Deployed It](https://medium.com/@djweston38/c4316b4e36f8)
 
 ---
 
